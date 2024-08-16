@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stylish Monthly Calendar</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+    body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 80px;
+    /* background: linear-gradient(45deg, #2ecc71, #3498db); */
+    background-image: url(https://img2.wallspic.com/crops/1/9/0/1/7/171091/171091-woodland-tree-graphics-wood-natural_landscape-7680x4320.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: 'Poppins', sans-serif;
+}
+
+.calendar-container {
+    background: #fff;
+    background-image: url(https://img3.wallspic.com/previews/0/8/6/4/7/174680/174680-continuation-water-tableware-snow-drinkware-550x310.jpg);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 90%;
+    max-width: 800px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.nav-btn {
+    background: linear-gradient(45deg, #3498db, #8e44ad);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.nav-btn:hover {
+    transform: scale(1.1);
+}
+
+.month-year {
+    font-size: 24px;
+    color: #333;
+    font-weight: bold;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: 10px;
+}
+
+.day-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+}
+
+.day {
+    background: #ecf0f1;
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.day:hover {
+    background: linear-gradient(45deg, #f39c12, #f1c40f);
+    transform: scale(1.1);
+    color: #fff;
+}
+
+.day.active {
+    background: linear-gradient(45deg, #e74c3c, #e67e22);
+    color: #fff;
+    transform: scale(1.2);
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+
+.day-details {
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+}
+
+.day-number {
+    font-size: 48px;
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+.day-name-large {
+    font-size: 24px;
+    color: #3498db;
+    margin-top: 10px;
+}
+
+.quote {
+    font-size: 18px;
+    color: #333;
+    margin-top: 20px;
+    font-style: italic;
+}
+
+@media screen and (max-width: 600px) {
+    .calendar-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .day-number {
+        font-size: 36px;
+    }
+
+    .day-name-large {
+        font-size: 20px;
+    }
+
+    .quote {
+        font-size: 16px;
+    }
+}
+
+</style>
+<body>
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <button id="prev-month" class="nav-btn">&lt;</button>
+            <div id="month-year" class="month-year"></div>
+            <button id="next-month" class="nav-btn">&gt;</button>
+        </div>
+        <div class="calendar-grid">
+            <div class="day-name">Sun</div>
+            <div class="day-name">Mon</div>
+            <div class="day-name">Tue</div>
+            <div class="day-name">Wed</div>
+            <div class="day-name">Thu</div>
+            <div class="day-name">Fri</div>
+            <div class="day-name">Sat</div>
+        </div>
+        <div class="day-details">
+            <div id="day-details-content" class="day-details-content">
+                <div id="day-number" class="day-number">1</div>
+                <div id="day-name" class="day-name-large">Monday</div>
+                <div id="quote" class="quote">"Your daily quote will appear here."</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const calendarGrid = document.querySelector('.calendar-grid');
+const monthYearDisplay = document.getElementById('month-year');
+const prevMonthBtn = document.getElementById('prev-month');
+const nextMonthBtn = document.getElementById('next-month');
+const dayDetailsContent = document.getElementById('day-details-content');
+const dayNumber = document.getElementById('day-number');
+const dayNameLarge = document.getElementById('day-name');
+const quoteElement = document.getElementById('quote');
+
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+
+const quotes = [
+    "Believe you can and you're halfway there.",
+    "The only limit to our realization of tomorrow is our doubts of today.",
+    "It does not matter how slowly you go as long as you do not stop.",
+    "You are never too old to set another goal or to dream a new dream.",
+    "The future belongs to those who believe in the beauty of their dreams.",
+    "Keep your face always toward the sunshine—and shadows will fall behind you.",
+    "It always seems impossible until it’s done.",
+    "Success is not the key to happiness. Happiness is the key to success.",
+    "What you get by achieving your goals is not as important as what you become by achieving your goals.",
+    "The only way to do great work is to love what you do.",
+    "The purpose of life is not to be happy. It is to be useful, to be honorable, to be compassionate.",
+    "The best way to predict the future is to create it.",
+    "Life is 10% what happens to us and 90% how we react to it.",
+    "Change your life today. Don't gamble on the future, act now, without delay.",
+    "Act as if what you do makes a difference. It does.",
+    "Believe in yourself and all that you are.",
+    "You have within you right now, everything you need to deal with whatever the world can throw at you.",
+    "The way to get started is to quit talking and begin doing.",
+    "Quality is not an act, it is a habit.",
+    "Your time is limited, so don't waste it living someone else's life.",
+    "The best revenge is massive success.",
+    "The best preparation for tomorrow is doing your best today.",
+    "The harder the conflict, the greater the triumph.",
+    "Keep going. Be all in.",
+    "You are enough just as you are.",
+    "Success usually comes to those who are too busy to be looking for it.",
+    "The only impossible journey is the one you never begin.",
+    "Dream big and dare to fail.",
+    "The way to achieve your own success is to be willing to help somebody else get it first.",
+    "You can waste your lives drawing lines. Or you can live your life crossing them.",
+    "You must expect great things of yourself before you can do them."
+];
+
+function generateCalendar(month, year) {
+    calendarGrid.innerHTML = '';
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    monthYearDisplay.textContent = `${new Date(year, month).toLocaleString('default', { month: 'long' })} ${year}`;
+    
+    for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.classList.add('day');
+        calendarGrid.appendChild(emptyCell);
+    }
+
+    for (let i = 1; i <= daysInMonth; i++) {
+        const dayCell = document.createElement('div');
+        dayCell.classList.add('day');
+        dayCell.textContent = i;
+        dayCell.addEventListener('click', () => showDayDetails(i));
+        calendarGrid.appendChild(dayCell);
+    }
+}
+
+function showDayDetails(day) {
+    const selectedDate = new Date(currentYear, currentMonth, day);
+    const dayName = selectedDate.toLocaleString('default', { weekday: 'long' });
+    const quote = quotes[(day - 1) % quotes.length];
+
+    dayNumber.textContent = day;
+    dayNameLarge.textContent = dayName;
+    quoteElement.textContent = `"${quote}"`;
+
+    document.querySelectorAll('.day').forEach(cell => cell.classList.remove('active'));
+    document.querySelectorAll('.day')[day - 1 + new Date(currentYear, currentMonth, 1).getDay()].classList.add('active');
+
+    dayDetailsContent.classList.add('show');
+}
+
+prevMonthBtn.addEventListener('click', () => {
+    currentMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    currentYear = currentMonth === 11 ? currentYear - 1 : currentYear;
+    generateCalendar(currentMonth, currentYear);
+});
+
+nextMonthBtn.addEventListener('click', () => {
+    currentMonth = currentMonth === 11 ? 0 : currentMonth + 1;
+    currentYear = currentMonth === 0 ? currentYear + 1 : currentYear;
+    generateCalendar(currentMonth, currentYear);
+});
+
+generateCalendar(currentMonth, currentYear);
+showDayDetails(new Date().getDate());
+
+    </script>
+</body>
+</html>
